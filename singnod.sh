@@ -105,6 +105,79 @@ cat << EOF > config.json
 }
 EOF
 
+# 生成订阅链接
+cat << EOF > subscription.json
+{
+  "proxies": [
+    {
+      "name": "VLESS-XTLS",
+      "type": "vless",
+      "server": "$server_ip",
+      "port": $server_port,
+      "uuid": "$uuid",
+      "security": "xtls",
+      "network": "tcp",
+      "tls": {
+        "enabled": true,
+        "server_name": "$server_name",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        }
+      }
+    },
+    {
+      "name": "Hysteria2",
+      "type": "hysteria2",
+      "server": "$server_ip",
+      "port": $server_port,
+      "password": "$h2_password",
+      "up_mbps": 100,
+      "down_mbps": 100,
+      "tls": {
+        "enabled": true,
+        "server_name": "$server_name"
+      },
+      "obfs": {
+        "type": "hysteria2",
+        "password": "$h2_password"
+      }
+    }
+  ]
+}
+EOF
+
+# 生成订阅链接
+subscription_link="http://$(hostname -I | awk '{print $1}'):8080/subscription.json"
+
+# 提取节点信息并显示
+echo "=================================================="
+echo " 节点信息"
+echo "=================================================="
+
+# VLESS 节点信息
+echo "VLESS 节点信息:"
+echo "  地址: $server_ip"
+echo "  端口: $server_port"
+echo "  UUID: $uuid"
+echo "  安全: xtls-rprx-vision"
+echo "  域名: $server_name"
+
+# Hysteria2 节点信息
+echo "Hysteria2 节点信息:"
+echo "  地址: $server_ip"
+echo "  端口: $server_port"
+echo "  密码: $h2_password"
+echo "  域名: $server_name"
+
+# 显示订阅链接
+echo "=================================================="
+echo " 订阅链接"
+echo "=================================================="
+echo "你可以使用以下订阅链接导入节点:"
+echo "$subscription_link"
+echo "=================================================="
+
 # 提示信息
 echo "=================================================="
 echo " 配置文件已生成为 config.json"
